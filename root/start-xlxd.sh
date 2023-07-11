@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/command/with-contenv sh
 
 PIDFILE="/var/log/xlxd.pid"
 # Remove pid file if it exists

@@ -1,24 +1,21 @@
 # syntax=docker/dockerfile:1-labs
-#FROM amd64/debian:latest AS base
-#FROM amd64/debian:bookworm-slim AS base
 FROM amd64/ubuntu:latest AS base
-#FROM amd64/php:apache AS base
 
-SHELL [“/bin/bash”, “-c”]
+SHELL ["/bin/bash" ,"-c"]
 
 ENTRYPOINT ["/init"]
 
 ENV TERM="xterm" LANG="C.UTF-8" LC_ALL="C.UTF-8"
 ENV CALLSIGN="KK7MNZ" EMAIL="matt@kk7mnz.com" URL="xlx847.kk7mnz.com" XRFNUM="XLX847"
-ENV CALLHOME="true" COUNTRY="United States" DESCRIPTION="Chandler Ham Radio Club"
-ENV MODULES="4" MODULEA="Main" MODULEB="TBD" MODULEC="TBD" MODULED="TBD"
-ENV XLXCONFIG="/var/www/xlxd/pgs/config.inc.php"
-ENV YSF_AUTOLINK_ENABLE="1" YSF_AUTOLINK_MODULE="A" YSF_DEFAULT_NODE_RX_FREQ="438000000" YSF_DEFAULT_NODE_TX_FREQ="438000000"
-ENV REFLECTOR_NAME="\'C\',\'H\',\'R\',\'C\',\'\ \',\'R\',\'e\',\'f\',\'l\',\'e\',\'c\',\'t\',\'o\',\'r\'"
-ENV XLXD_DIR="/xlxd" XLXD_INST_DIR="/src/xlxd" XLXD_WEB_DIR="/var/www/xlxd"
-ARG ARCH="x86_64" S6_OVERLAY_VERSION="3.1.5.0" S6_RCD_DIR="/etc/s6-overlay/s6-rc.d" S6_LOGGING="1" S6_KEEP_ENV="1"
-ARG AMBED_DIR="/ambed" AMBED_INST_DIR="/src/xlxd/ambed"
-ARG FTDI_INST_DIR="/src/ftdi"
+ENV CALLHOME=true COUNTRY="United States" DESCRIPTION="Chandler Ham Radio Club"
+ENV MODULES=4 MODULEA="Main" MODULEB="TBD" MODULEC="TBD" MODULED="TBD"
+ENV XLXCONFIG=/var/www/xlxd/pgs/config.inc.php
+ENV YSF_AUTOLINK_ENABLE=1 YSF_AUTOLINK_MODULE="A" YSF_DEFAULT_NODE_RX_FREQ=438000000 YSF_DEFAULT_NODE_TX_FREQ=438000000
+ENV REFLECTOR_NAME="'C','H','R','C','\ ','R','e','f','l','e','c','t','o','r'"
+ENV XLXD_DIR=/xlxd XLXD_INST_DIR=/src/xlxd XLXD_WEB_DIR=/var/www/xlxd
+ARG ARCH="x86_64" S6_OVERLAY_VERSION=3.1.5.0 S6_RCD_DIR=/etc/s6-overlay/s6-rc.d S6_LOGGING=1 S6_KEEP_ENV=1
+ARG AMBED_DIR=/ambed AMBED_INST_DIR=/src/xlxd/ambed
+ARG FTDI_INST_DIR=/src/ftdi
 
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections && \
     apt update && \
@@ -32,7 +29,7 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
         php-mbstring
 
 # Setup directories
-RUN	mkdir -p \
+RUN mkdir -p \
     ${AMBED_DIR} \
     ${AMBED_INST_DIR} \
     ${FTDI_INST_DIR} \
@@ -41,7 +38,7 @@ RUN	mkdir -p \
     ${XLXD_WEB_DIR}
 
 # Add users and set permissions on home directories
-RUN	useradd -U -d ${XLXD_DIR} -s /bin/false xlxd && \
+RUN useradd -U -d ${XLXD_DIR} -s /bin/false xlxd && \
     usermod -a -G users,www-data xlxd && \
     useradd -U -d ${AMBED_DIR} -s /bin/false ambed && \
     usermod -a -G users,www-data ambed && \
@@ -67,11 +64,14 @@ ADD http://xlxapi.rlx.lu/api/exportdmr.php ${XLXD_DIR}/dmrid.dat
 # Copy in source code (use local sources if repositories go down)
 #COPY src/ /
 
-# Copy in s6 service definitions and scripts
-COPY root/ /
-
 # Perform pre-compiliation configurations
-RUN /precompile.sh
+RUN sed -i "s/'X','L','X','\ ','r','e','f','l','e','c','t','o','r','\ '/${REFLECTOR_NAME}/g" ${XLXD_INST_DIR}/src/cysfprotocol.cpp && \
+    sed -i "s/\(YSF_AUTOLINK_ENABLE[[:blank:]]*\)[[:digit:]]/\1${YSF_AUTOLINK_ENABLE}/g" ${XLXD_INST_DIR}/src/main.h && \
+    sed -i "s/\(YSF_AUTOLINK_MODULE[[:blank:]]*\)'[[:alpha:]]'/\1\'${YSF_AUTOLINK_MODULE}\'/g" ${XLXD_INST_DIR}/src/main.h && \
+    sed -i "s/\(YSF_DEFAULT_NODE_RX_FREQ[[:blank:]]*\)[[:digit:]]*/\1${YSF_DEFAULT_NODE_RX_FREQ}/g" ${XLXD_INST_DIR}/src/main.h && \
+    sed -i "s/\(YSF_DEFAULT_NODE_TX_FREQ[[:blank:]]*\)[[:digit:]]*/\1${YSF_DEFAULT_NODE_TX_FREQ}/g" ${XLXD_INST_DIR}/src/main.h && \
+    cp ${XLXD_INST_DIR}/src/main.h ${XLXD_DIR}/main.h.customized && \
+    cp ${XLXD_INST_DIR}/src/cysfprotocol.cpp ${XLXD_DIR}/cysfprotocol.cpp.customized
 
 # Install FTDI driver
 RUN cp ${FTDI_INST_DIR}/release/build/libftd2xx.* /usr/local/lib && \
@@ -95,15 +95,17 @@ RUN cd ${AMBED_INST_DIR} && \
 RUN cp -ivR ${XLXD_INST_DIR}/dashboard/* ${XLXD_WEB_DIR}/ && \
     chown -R www-data:www-data ${XLXD_WEB_DIR}/
 
+# Copy in s6 service definitions and scripts
+COPY root/ /
+
 # Cleanup
-RUN	apt -y purge build-essential && \
+RUN apt -y purge build-essential && \
     apt -y autoremove && \
     apt -y clean && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /tmp/* && \
     rm -rf /var/tmp/* && \
-    rm -f /precompile.sh
-#    rm -rf /src
+    rm -rf /src
 
 #TCP port 80 (http) optional TCP port 443 (https)
 EXPOSE 80/tcp 443/tcp
