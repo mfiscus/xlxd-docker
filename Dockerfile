@@ -105,6 +105,7 @@ RUN apt -y purge build-essential && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /tmp/* && \
     rm -rf /var/tmp/* && \
+    rm -rf /regex-test.sh && \
     rm -rf /src
 
 #TCP port 80 (http) optional TCP port 443 (https)

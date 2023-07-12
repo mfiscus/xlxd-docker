@@ -1,4 +1,4 @@
-#!/command/with-contenv sh
+#!/command/with-contenv bash
 
 ### Use environment variables to configure services
 
@@ -34,6 +34,9 @@ echo "ServerName ${URL}" >> /etc/apache2/apache2.conf
 
 a2dissite *default >/dev/null 2>&1
 a2ensite ${URL} >/dev/null 2>&1
+
+# backup config files without overwriting
+cp -vnp /xlxd/*.* /config
 
 touch /.firstRunComplete
 echo "xlxd first run setup complete"
