@@ -6,4 +6,4 @@ cp -vp /xlxd/*.* /config
 TARGET="localhost"
 CURL_OPTS="--connect-timeout 15 --max-time 100 --silent --show-error --fail"
 
-curl ${CURL_OPTS} "http://${TARGET}/index.php?callhome=1" >/dev/null
+curl ${CURL_OPTS} "http://${TARGET}:8470/index.php?callhome=1" >/dev/null

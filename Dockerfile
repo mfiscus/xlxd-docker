@@ -109,7 +109,7 @@ RUN apt -y purge build-essential && \
     rm -rf /src
 
 #TCP port 80 (http) optional TCP port 443 (https)
-EXPOSE 80/tcp 443/tcp
+EXPOSE 80/tcp 443/tcp 8470/tcp
 #TCP port 8080 (RepNet) optional
 EXPOSE 8080/tcp
 #UDP port 10001 (json interface XLX Core)

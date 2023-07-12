@@ -7,8 +7,7 @@ if [ -e /.firstRunComplete ]; then
   exit 0
 fi
 
-env >/var/log/customize.env
-
+# configure application
 sed -i "s/\(PageOptions\['ContactEmail'\][[:blank:]]*\=[[:blank:]]*\)'\([[:print:]]*\)'/\1\'${EMAIL}\'/g" ${XLXCONFIG} # email address
 sed -i "s/\(CallingHome\['Country'\][[:blank:]]*\=[[:blank:]]*\)\"\([[:print:]]*\)\"/\1\"$(echo ${COUNTRY} | awk '{gsub(/ /,"\\ ")}8')\"/g" ${XLXCONFIG} # country
 sed -i "s/\(CallingHome\['Comment'\][[:blank:]]*\=[[:blank:]]*\)\"\([[:print:]]*\)\"/\1\"$(echo ${DESCRIPTION} | awk '{gsub(/ /,"\\ ")}8')\"/g" ${XLXCONFIG} # description
@@ -23,16 +22,22 @@ sed -i "s/\(PageOptions\['ModuleNames'\]\['B'\][[:blank:]]*\=[[:blank:]]*\)'\([[
 sed -i "s/\(PageOptions\['ModuleNames'\]\['C'\][[:blank:]]*\=[[:blank:]]*\)'\([[:print:]]*\)'/\1\'${MODULEC}\'/g" ${XLXCONFIG}
 sed -i "s/\(PageOptions\['ModuleNames'\]\['D'\][[:blank:]]*\=[[:blank:]]*\)'\([[:print:]]*\)'/\1\'${MODULED}\'/g" ${XLXCONFIG}
 
+# generate virtual host
 cat << EOF > /etc/apache2/sites-available/${URL}.conf
-<VirtualHost *:80>
+<VirtualHost *:8470>
     ServerName ${URL}
     DocumentRoot /var/www/xlxd
 </VirtualHost>
 EOF
 
+# Configure httpd
+echo "Listen 8470" >/etc/apache2/ports.conf
 echo "ServerName ${URL}" >> /etc/apache2/apache2.conf
 
+# disable default site(s)
 a2dissite *default >/dev/null 2>&1
+
+# enable xlxd dashboard
 a2ensite ${URL} >/dev/null 2>&1
 
 # backup config files without overwriting
