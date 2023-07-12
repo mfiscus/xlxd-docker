@@ -6,7 +6,7 @@ SHELL ["/bin/bash" ,"-c"]
 ENTRYPOINT ["/init"]
 
 ENV TERM="xterm" LANG="C.UTF-8" LC_ALL="C.UTF-8"
-ENV CALLSIGN="KK7MNZ" EMAIL="matt@kk7mnz.com" URL="xlx847.kk7mnz.com" XRFNUM="XLX847"
+ENV CALLSIGN="KK7MNZ" EMAIL="matt@kk7mnz.com" URL="xlx847.kk7mnz.com" XRFNUM="XLX847" PORT=8470
 ENV CALLHOME=true COUNTRY="United States" DESCRIPTION="Chandler Ham Radio Club"
 ENV MODULES=4 MODULEA="Main" MODULEB="TBD" MODULEC="TBD" MODULED="TBD"
 ENV XLXCONFIG=/var/www/xlxd/pgs/config.inc.php
@@ -105,11 +105,10 @@ RUN apt -y purge build-essential && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /tmp/* && \
     rm -rf /var/tmp/* && \
-    rm -rf /regex-test.sh && \
     rm -rf /src
 
-#TCP port 80 (http) optional TCP port 443 (https)
-EXPOSE 80/tcp 443/tcp 8470/tcp
+#TCP port(s) for http(s)
+EXPOSE ${PORT}/tcp
 #TCP port 8080 (RepNet) optional
 EXPOSE 8080/tcp
 #UDP port 10001 (json interface XLX Core)
