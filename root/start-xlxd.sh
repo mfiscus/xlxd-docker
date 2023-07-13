@@ -2,6 +2,7 @@
 
 PIDFILE="/var/log/xlxd.pid"
 XMLFILE="/var/log/xlxd.xml"
+IP=$(hostname -I)
 
 # check for modified config files
 cp -vp /config/*.* /xlxd
@@ -19,7 +20,7 @@ cat << EOF > ${XMLFILE}
 EOF
 
 # start daemon
-/xlxd/xlxd ${XRFNUM} 0.0.0.0 127.0.0.1
+/xlxd/xlxd ${XRFNUM} ${IP} 127.0.0.1
 
 # Create pid file for service uptime dashboard class
 echo `pidof xlxd` > $PIDFILE
