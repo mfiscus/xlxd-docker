@@ -95,6 +95,11 @@ RUN cd ${AMBED_INST_DIR} && \
 RUN cp -ivR ${XLXD_INST_DIR}/dashboard/* ${XLXD_WEB_DIR}/ && \
     chown -R www-data:www-data ${XLXD_WEB_DIR}/
 
+# Copy in custom images and stylesheet
+COPY --chown=www-data:www-data custom/header.jpg ${XLXD_WEB_DIR}/img/header.jpg
+COPY --chown=www-data:www-data custom/logo.jpg ${XLXD_WEB_DIR}/img/dvc.jpg
+COPY --chown=www-data:www-data custom/layout.css ${XLXD_WEB_DIR}/css/layout.css
+
 # Copy in s6 service definitions and scripts
 COPY root/ /
 
