@@ -71,9 +71,59 @@ services:
       - "traefik.docker.network=docker_proxy"
       - "traefik.frontend=xlxd-frontend"
       - "traefik.frontend.rule=HostRegexp:xlx847.kk7mnz.com,{catchall:.*}"
+      # HTTP routers
       - "traefik.http.routers.xlxd-frontend.rule=Host(`xlx847.kk7mnz.com`)"
       - "traefik.http.routers.xlxd-frontend.entrypoints=www"
       - "traefik.http.services.xlxd-frontend.loadbalancer.server.port=8470"
+      # UDP routers
+      # repnet
+      - "traefik.udp.routers.xlxd-repnet.entrypoints=xlxd-repnet"
+      - "traefik.udp.routers.xlxd-repnet.service=xlxd-repnet"
+      - "traefik.udp.services.xlxd-repnet.loadbalancer.server.port=8080"
+      # xlxcore
+      - "traefik.udp.routers.xlxd-xlxcore.entrypoints=xlxd-xlxcore"
+      - "traefik.udp.routers.xlxd-xlxcore.service=xlxd-xlxcore"
+      - "traefik.udp.services.xlxd-xlxcore.loadbalancer.server.port=10001"
+      # xlxd-ysf
+      - "traefik.udp.routers.xlxd-ysf.entrypoints=xlxd-ysf"
+      - "traefik.udp.routers.xlxd-ysf.service=xlxd-ysf"
+      - "traefik.udp.services.xlxd-ysf.loadbalancer.server.port=42000"
+      # xlxd-dextra
+      - "traefik.udp.routers.xlxd-dextra.entrypoints=xlxd-dextra"
+      - "traefik.udp.routers.xlxd-dextra.service=xlxd-dextra"
+      - "traefik.udp.services.xlxd-dextra.loadbalancer.server.port=30001"
+      # xlxd-dplus
+      - "traefik.udp.routers.xlxd-dplus.entrypoints=xlxd-dplus"
+      - "traefik.udp.routers.xlxd-dplus.service=xlxd-dplus"
+      - "traefik.udp.services.xlxd-dplus.loadbalancer.server.port=20001"
+      # dcs
+      - "traefik.udp.routers.xlxd-dcs.entrypoints=xlxd-dcs"
+      - "traefik.udp.routers.xlxd-dcs.service=xlxd-dcs"
+      - "traefik.udp.services.xlxd-dcs.loadbalancer.server.port=30051"
+      # dmr
+      - "traefik.udp.routers.xlxd-dmr.entrypoints=xlxd-dmr"
+      - "traefik.udp.routers.xlxd-dmr.service=xlxd-dmr"
+      - "traefik.udp.services.xlxd-dmr.loadbalancer.server.port=8880"
+      # mmdvm
+      - "traefik.udp.routers.xlxd-mmdvm.entrypoints=xlxd-mmdvm"
+      - "traefik.udp.routers.xlxd-mmdvm.service=xlxd-mmdvm"
+      - "traefik.udp.services.xlxd-mmdvm.loadbalancer.server.port=62030"
+      # icom-terminal-1
+      - "traefik.udp.routers.xlxd-icom-terminal-1.entrypoints=xlxd-icom-terminal-1"
+      - "traefik.udp.routers.xlxd-icom-terminal-1.service=xlxd-icom-terminal-1"
+      - "traefik.udp.services.xlxd-icom-terminal-1.loadbalancer.server.port=12345"
+      # icom-terminal-2
+      - "traefik.udp.routers.xlxd-icom-terminal-2.entrypoints=xlxd-icom-terminal-2"
+      - "traefik.udp.routers.xlxd-icom-terminal-2.service=xlxd-icom-terminal-2"
+      - "traefik.udp.services.xlxd-icom-terminal-2.loadbalancer.server.port=12346"
+      # icom-dv
+      - "traefik.udp.routers.xlxd-icom-dv.entrypoints=xlxd-icom-dv"
+      - "traefik.udp.routers.xlxd-icom-dv.service=xlxd-icom-dv"
+      - "traefik.udp.services.xlxd-icom-dv.loadbalancer.server.port=40000"
+      # yaesu-imrs
+      - "traefik.udp.routers.xlxd-yaesu-imrs.entrypoints=xlxd-yaesu-imrs"
+      - "traefik.udp.routers.xlxd-yaesu-imrs.service=xlxd-yaesu-imrs"
+      - "traefik.udp.services.xlxd-yaesu-imrs.loadbalancer.server.port=21220"
     environment:
       CALLSIGN: 'KK7MNZ'
       EMAIL: 'matt@kk7mnz.com'
