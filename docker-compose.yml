@@ -12,7 +12,7 @@ networks:
 
 services:
 
-  traefik:
+   traefik:
     image: traefik:latest
     container_name: "traefik"
     domainname: kk7mnz.com
@@ -30,6 +30,7 @@ services:
       - "--entrypoints.www.address=:80"
       - "--entrypoints.traefik.address=:8080"
       # xlxd
+      - "--entrypoints.xlxd-http.address=:8470"
       - "--entrypoints.xlxd-repnet.address=:8080/udp"
       - "--entrypoints.xlxd-xlxcore.address=:10001/udp"
       - "--entrypoints.xlxd-ysf.address=:42000/udp"
@@ -41,22 +42,35 @@ services:
       - "--entrypoints.xlxd-icom-terminal-1.address=:12345/udp"
       - "--entrypoints.xlxd-icom-terminal-2.address=:12346/udp"
       - "--entrypoints.xlxd-icom-dv.address=:40000/udp"
-      - "--entrypoints.xlxd-yaesu-imrs.address=:21220/udp"
+      - "--entrypoints.xlxd-yaesu-imrs.address=:21110/udp"
     ports:
       # The HTTP port
       - "0.0.0.0:80:80/tcp"
       # The Web UI (enabled by --api.insecure=true)
       - "0.0.0.0:8080:8080/tcp"
+      # xlxd ports
+      - 8470:8470/tcp
+      - 8080:8080/udp
+      - 10001:10001/udp
+      - 10002:10002/udp
+      - 42000:42000/udp
+      - 30001:30001/udp
+      - 20001:20001/udp
+      - 30051:30051/udp
+      - 8880:8880/udp
+      - 62030:62030/udp
+      - 12345:12345/udp
+      - 12346:12346/udp
+      - 40000:40000/udp
+      - 21110:21110/udp
     networks:
       proxy:
-        ipv4_address: "10.0.0.2"
+        ipv4_address: "10.0.0.3"
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /opt/traefik/traefik.log:/var/log/traefik.log
-      #- /opt/traefik/traefik.toml:/traefik.toml
     dns:
-      - 1.1.1.1
+      - "1.1.1.1"
     dns_search: kk7mnz.com
     restart: unless-stopped
 
@@ -66,15 +80,21 @@ services:
     domainname: kk7mnz.com
     hostname: xlxd_container
     labels:
-      - "traefik.enable=true"
-      - "traefik.port=80"
+      - "traefik.xlxd-http.rule=HostRegexp:xlx847.kk7mnz.com,{catchall:.*}"
+      - "traefik.xlxd-http.priority=1"
+      - "traefik.xlxd-http=xlxd-xlxd-http"
+      #- "traefik.port=80"
       - "traefik.docker.network=docker_proxy"
-      - "traefik.frontend=xlxd-frontend"
-      - "traefik.frontend.rule=HostRegexp:xlx847.kk7mnz.com,{catchall:.*}"
-      # HTTP routers
-      - "traefik.http.routers.xlxd-frontend.rule=Host(`xlx847.kk7mnz.com`)"
-      - "traefik.http.routers.xlxd-frontend.entrypoints=www"
-      - "traefik.http.services.xlxd-frontend.loadbalancer.server.port=8470"
+      # Explicitly tell Traefik to expose this container
+      - "traefik.enable=true"
+      # The domain the service will respond to
+      - "traefik.http.routers.xlxd-http.rule=Host(`xlx847.kk7mnz.com`)"
+      # Allow request only from the predefined entry point named "www"
+      - "traefik.http.routers.xlxd-http.entrypoints=xlxd-http"
+      # Specify port
+      - "traefik.http.services.xlxd-http.loadbalancer.server.port=8470"
+      # test alternate http port
+      - "traefik.http.routers.xlxd-http.service=xlxd-http"
       # UDP routers
       # repnet
       - "traefik.udp.routers.xlxd-repnet.entrypoints=xlxd-repnet"
@@ -123,44 +143,34 @@ services:
       # yaesu-imrs
       - "traefik.udp.routers.xlxd-yaesu-imrs.entrypoints=xlxd-yaesu-imrs"
       - "traefik.udp.routers.xlxd-yaesu-imrs.service=xlxd-yaesu-imrs"
-      - "traefik.udp.services.xlxd-yaesu-imrs.loadbalancer.server.port=21220"
+      - "traefik.udp.services.xlxd-yaesu-imrs.loadbalancer.server.port=21110"
     environment:
       CALLSIGN: 'KK7MNZ'
-      EMAIL: 'matt@kk7mnz.com'
-      # URL for dashboard
-      URL: 'xlx847.kk7mnz.com'
-      # Port to run dashboard on
-      PORT: '8470'
-      XRFNUM: 'XLX847'
+      EMAIL: 'your_email'
+      URL: 'dashboard_url'
+      PORT: 'http_port'
+      XRFNUM: 'XLX000'
       COUNTRY: 'United States'
-      # Make your ysf reflector stand out in the list
-      DESCRIPTION: 'Chandler Ham Radio Club'
-      # Number of modules to run (default: 10, max: 26)
+      DESCRIPTION: 'your_description'
       MODULES: '4'
-      # Support for labeling first 4 modules
       MODULEA: 'Main'
       MODULEB: 'TBD'
       MODULEC: 'TBD'
       MODULED: 'TBD'
-      # Enable ysf auto linking (disable: 0, enable: 1)
       YSF_AUTOLINK_ENABLE: '1'
-      # Define default module to auto link to
       YSF_AUTOLINK_MODULE: 'A'
-      # I read somewhere that it was important to define this so I built in support. Not sure what it is for yet.
       YSF_DEFAULT_NODE_RX_FREQ: '438000000'
       YSF_DEFAULT_NODE_TX_FREQ: '438000000'
     networks:
       proxy:
-        ipv4_address: "10.0.0.3"
+        ipv4_address: "10.0.0.12"
     volumes:
-      # volume for storing custom configuration files
       - /opt/xlxd:/config
     privileged: true
     devices:
-      # grant access to AMBE USB DV vocodor (tested with ThumbDV)
       - /dev/usb:/dev/usb
     dns:
-      - 1.1.1.1
+      - "1.1.1.1"
     dns_search: kk7mnz.com
     restart: unless-stopped
     

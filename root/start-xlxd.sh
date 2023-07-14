@@ -11,12 +11,12 @@ cp -vp /config/*.* /xlxd
 cat << EOF > ${XMLFILE}
 <?xml version="1.0" encoding="UTF-8"?>
 <Version>2.5.3</Version>
-<XLX847  linked peers>
-</XLX847  linked peers>
-<XLX847  linked nodes>
-</XLX847  linked nodes>
-<XLX847  heard users>
-</XLX847  heard users>
+<${XRFNUM}  linked peers>
+</${XRFNUM}  linked peers>
+<${XRFNUM}  linked nodes>
+</${XRFNUM}  linked nodes>
+<${XRFNUM}  heard users>
+</${XRFNUM}  heard users>
 EOF
 
 # start daemon
