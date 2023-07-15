@@ -79,6 +79,8 @@ services:
     container_name: xlxd
     domainname: kk7mnz.com
     hostname: xlxd_container
+    depends_on:
+      - traefik
     labels:
       - "traefik.xlxd-http.rule=HostRegexp:xlx847.kk7mnz.com,{catchall:.*}"
       - "traefik.xlxd-http.priority=1"
@@ -166,9 +168,8 @@ services:
         ipv4_address: "10.0.0.12"
     volumes:
       - /opt/xlxd:/config
-    privileged: true
-    devices:
-      - /dev/usb:/dev/usb
+    device_cgroup_rules:
+      - 'c 188:* rmw'
     dns:
       - "1.1.1.1"
     dns_search: kk7mnz.com

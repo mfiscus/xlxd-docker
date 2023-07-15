@@ -156,3 +156,27 @@ grep "PageOptions\['CustomTXT'\]" | \
 sed "s/\(PageOptions\['CustomTXT'\][[:blank:]]*\=[[:blank:]]*\)'\([[:print:]]*\)'/\1'$(echo ${DESCRIPTION} | awk '{gsub(/ /,"\\ ")}8')'/g"
 
 echo
+
+cat ./src/xlxd/dashboard/pgs/users.php | \
+grep "d.m.Y" | \
+sed "s/d\.m\.Y/m\.d\.Y/g"
+
+echo
+
+cat ./src/xlxd/dashboard/pgs/traffic.php | \
+grep "d.m.Y" | \
+sed "s/d\.m\.Y/m\.d\.Y/g"
+
+echo
+
+cat ./src/xlxd/dashboard/pgs/peers.php | \
+grep "d.m.Y" | \
+sed "s/d\.m\.Y/m\.d\.Y/g"
+
+echo
+
+cat ./src/xlxd/dashboard/pgs/repeaters.php | \
+grep "d.m.Y" | \
+sed "s/d\.m\.Y/m\.d\.Y/g"
+
+echo
