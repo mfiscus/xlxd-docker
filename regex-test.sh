@@ -11,6 +11,12 @@ cat ./src/xlxd/src/cysfprotocol.cpp | \
 grep "uint8 desc" | \
 sed "s/'X','L','X','\ ','r','e','f','l','e','c','t','o','r','\ '/${REFLECTOR_NAME}/g"
 
+echo
+
+MODULES=4
+cat ./src/xlxd/src/main.h | \
+grep "NB_OF_MODULES" | \
+sed "1!b;s/\(NB_OF_MODULES[[:blank:]]*\)[[:digit:]]*/\1${MODULES}/g"
 
 echo
 

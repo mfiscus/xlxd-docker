@@ -66,6 +66,7 @@ ADD http://xlxapi.rlx.lu/api/exportdmr.php ${XLXD_DIR}/dmrid.dat
 
 # Perform pre-compiliation configurations
 RUN sed -i "s/'X','L','X','\ ','r','e','f','l','e','c','t','o','r','\ '/${REFLECTOR_NAME}/g" ${XLXD_INST_DIR}/src/cysfprotocol.cpp && \
+    sed -i "1!b;s/\(NB_OF_MODULES[[:blank:]]*\)[[:digit:]]*/\1${MODULES}/g" ${XLXD_INST_DIR}/src/main.h && \
     sed -i "s/\(YSF_AUTOLINK_ENABLE[[:blank:]]*\)[[:digit:]]/\1${YSF_AUTOLINK_ENABLE}/g" ${XLXD_INST_DIR}/src/main.h && \
     sed -i "s/\(YSF_AUTOLINK_MODULE[[:blank:]]*\)'[[:alpha:]]'/\1\'${YSF_AUTOLINK_MODULE}\'/g" ${XLXD_INST_DIR}/src/main.h && \
     sed -i "s/\(YSF_DEFAULT_NODE_RX_FREQ[[:blank:]]*\)[[:digit:]]*/\1${YSF_DEFAULT_NODE_RX_FREQ}/g" ${XLXD_INST_DIR}/src/main.h && \
@@ -96,6 +97,8 @@ RUN cp -ivR ${XLXD_INST_DIR}/dashboard/* ${XLXD_WEB_DIR}/ && \
     chown -R www-data:www-data ${XLXD_WEB_DIR}/
 
 # Copy in custom images and stylesheet
+COPY --chown=www-data:www-data custom/up.png ${XLXD_WEB_DIR}/img/up.png
+COPY --chown=www-data:www-data custom/down.png ${XLXD_WEB_DIR}/img/down.png
 COPY --chown=www-data:www-data custom/header.jpg ${XLXD_WEB_DIR}/img/header.jpg
 COPY --chown=www-data:www-data custom/logo.jpg ${XLXD_WEB_DIR}/img/dvc.jpg
 COPY --chown=www-data:www-data custom/layout.css ${XLXD_WEB_DIR}/css/layout.css

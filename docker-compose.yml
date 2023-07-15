@@ -146,9 +146,9 @@ services:
       - "traefik.udp.services.xlxd-yaesu-imrs.loadbalancer.server.port=21110"
     environment:
       CALLSIGN: 'KK7MNZ'
-      EMAIL: 'your_email'
-      URL: 'dashboard_url'
-      PORT: 'http_port'
+      EMAIL: 'your@email.com'
+      URL: 'your_dashboard.com'
+      PORT: '80'
       XRFNUM: 'XLX000'
       COUNTRY: 'United States'
       DESCRIPTION: 'your_description'
