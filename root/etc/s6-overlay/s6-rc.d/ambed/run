@@ -1,4 +1,5 @@
-#!/command/with-contenv bash
+#!/command/with-contenv sh
 #/sbin/rmmod ftdi_sio
 #/sbin/rmmod usbserial
+
 /ambed/ambed 127.0.0.1

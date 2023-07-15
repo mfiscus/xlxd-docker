@@ -1,7 +1,5 @@
 # syntax=docker/dockerfile:1-labs
-FROM amd64/ubuntu:latest AS base
-
-SHELL ["/bin/bash" ,"-c"]
+FROM ubuntu:latest AS base
 
 ENTRYPOINT ["/init"]
 
@@ -13,7 +11,7 @@ ENV XLXCONFIG=/var/www/xlxd/pgs/config.inc.php
 ENV YSF_AUTOLINK_ENABLE=1 YSF_AUTOLINK_MODULE="A" YSF_DEFAULT_NODE_RX_FREQ=438000000 YSF_DEFAULT_NODE_TX_FREQ=438000000
 ENV REFLECTOR_NAME="'C','H','R','C','\ ','R','e','f','l','e','c','t','o','r'"
 ENV XLXD_DIR=/xlxd XLXD_INST_DIR=/src/xlxd XLXD_WEB_DIR=/var/www/xlxd
-ARG ARCH="x86_64" S6_OVERLAY_VERSION=3.1.5.0 S6_RCD_DIR=/etc/s6-overlay/s6-rc.d S6_LOGGING=1 S6_KEEP_ENV=1
+ARG S6_OVERLAY_VERSION=3.1.5.0 S6_RCD_DIR=/etc/s6-overlay/s6-rc.d S6_LOGGING=1 S6_KEEP_ENV=1
 ARG AMBED_DIR=/ambed AMBED_INST_DIR=/src/xlxd/ambed
 ARG FTDI_INST_DIR=/src/ftdi
 
@@ -35,21 +33,15 @@ RUN mkdir -p \
     ${FTDI_INST_DIR} \
     ${XLXD_DIR} \
     ${XLXD_INST_DIR} \
-    ${XLXD_WEB_DIR}
-
-# Add users and set permissions on home directories
-RUN useradd -U -d ${XLXD_DIR} -s /bin/false xlxd && \
-    usermod -a -G users,www-data xlxd && \
-    useradd -U -d ${AMBED_DIR} -s /bin/false ambed && \
-    usermod -a -G users,www-data ambed && \
-    chown -R www-data:www-data ${XLXD_DIR}/ && \
-    chown -R ambed:users ${AMBED_DIR}/
+    ${XLXD_WEB_DIR} && \
+    chown -R www-data:www-data ${XLXD_DIR}/
 
 # Fetch and extract S6 overlay
 ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz /tmp
-ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${ARCH}.tar.xz /tmp
-RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz && \
-    tar -C / -Jxpf /tmp/s6-overlay-${ARCH}.tar.xz
+RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz
+
+ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-x86_64.tar.xz /tmp
+RUN tar -C / -Jxpf /tmp/s6-overlay-x86_64.tar.xz
 
 # Clone xlxd repository
 ADD --keep-git-dir=true https://github.com/LX3JL/xlxd.git#master ${XLXD_INST_DIR}
@@ -57,9 +49,6 @@ ADD --keep-git-dir=true https://github.com/LX3JL/xlxd.git#master ${XLXD_INST_DIR
 # Download and extract ftdi driver
 ADD http://www.ftdichip.com/Drivers/D2XX/Linux/libftd2xx-x86_64-1.4.6.tgz /tmp
 RUN tar -C ${FTDI_INST_DIR} -zxvf /tmp/libftd2xx-x86_64-1.4.6.tgz
-
-# Generate dmrid.dat file
-ADD http://xlxapi.rlx.lu/api/exportdmr.php ${XLXD_DIR}/dmrid.dat
 
 # Copy in source code (use local sources if repositories go down)
 #COPY src/ /

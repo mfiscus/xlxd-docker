@@ -19,6 +19,9 @@ cat << EOF > ${XMLFILE}
 </${XRFNUM}  heard users>
 EOF
 
+# download the dmrid.dat from the XLXAPI server to the xlxd folder
+curl -L -s -o ${XLXD_DIR}/dmrid.dat http://xlxapi.rlx.lu/api/exportdmr.php
+
 # start daemon
 /xlxd/xlxd ${XRFNUM} ${IP} 127.0.0.1
 
