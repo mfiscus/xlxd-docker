@@ -47,8 +47,8 @@ a2dissite *default >/dev/null 2>&1
 # enable xlxd dashboard
 a2ensite ${URL} >/dev/null 2>&1
 
-# backup config files without overwriting
-cp -vnp /xlxd/*.* /config
+# backup config files
+cp -puv /xlxd/*.* /config
 
 touch /.firstRunComplete
 echo "xlxd first run setup complete"

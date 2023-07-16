@@ -5,7 +5,7 @@ XMLFILE="/var/log/xlxd.xml"
 IP=$(hostname -I)
 
 # check for modified config files
-cp -vp /config/*.* /xlxd
+cp -puv /config/*.* /xlxd
 
 # Create shell xml file so dashboard starts up immediately
 cat << EOF > ${XMLFILE}

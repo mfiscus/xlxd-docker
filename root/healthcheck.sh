@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # backup config files
-cp -vp /xlxd/*.* /config
+cp -puv /xlxd/*.* /config
 
 TARGET="localhost"
 CURL_OPTS="--connect-timeout 15 --max-time 100 --silent --show-error --fail"
