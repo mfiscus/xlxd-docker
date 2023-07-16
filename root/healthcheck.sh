@@ -1,7 +1,10 @@
 #!/bin/bash
 
 # backup config files
-cp -puv /xlxd/*.* /config
+cp -puv ${XLXD_DIR}*.* /config
+
+# backup connection log file
+cp -puv /var/log/xlxd.xml /config/log/
 
 TARGET="localhost"
 CURL_OPTS="--connect-timeout 15 --max-time 100 --silent --show-error --fail"

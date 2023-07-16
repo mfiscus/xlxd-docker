@@ -5,19 +5,10 @@ XMLFILE="/var/log/xlxd.xml"
 IP=$(hostname -I)
 
 # check for modified config files
-cp -puv /config/*.* /xlxd
+cp -puv /config/*.* ${XLXD_DIR}
 
-# Create shell xml file so dashboard starts up immediately
-cat << EOF > ${XMLFILE}
-<?xml version="1.0" encoding="UTF-8"?>
-<Version>2.5.3</Version>
-<${XRFNUM}  linked peers>
-</${XRFNUM}  linked peers>
-<${XRFNUM}  linked nodes>
-</${XRFNUM}  linked nodes>
-<${XRFNUM}  heard users>
-</${XRFNUM}  heard users>
-EOF
+# restore xml file to preserve historical data and allow dashboard to start immediately
+cp -puv /config/log/xlxd.xml ${XMLFILE}
 
 # download the dmrid.dat from the XLXAPI server to the xlxd folder
 curl -L -s -o ${XLXD_DIR}/dmrid.dat http://xlxapi.rlx.lu/api/exportdmr.php
