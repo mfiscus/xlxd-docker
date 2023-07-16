@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1-labs
-FROM ubuntu:latest AS base
+FROM amd64/ubuntu:latest AS base
 
 ENTRYPOINT ["/init"]
 
@@ -11,7 +11,7 @@ ENV XLXCONFIG=/var/www/xlxd/pgs/config.inc.php
 ENV YSF_AUTOLINK_ENABLE=1 YSF_AUTOLINK_MODULE="A" YSF_DEFAULT_NODE_RX_FREQ=438000000 YSF_DEFAULT_NODE_TX_FREQ=438000000
 ENV REFLECTOR_NAME="'C','H','R','C','\ ','R','e','f','l','e','c','t','o','r'"
 ENV XLXD_DIR=/xlxd XLXD_INST_DIR=/src/xlxd XLXD_WEB_DIR=/var/www/xlxd
-ARG S6_OVERLAY_VERSION=3.1.5.0 S6_RCD_DIR=/etc/s6-overlay/s6-rc.d S6_LOGGING=1 S6_KEEP_ENV=1
+ARG ARCH=x86_64 S6_OVERLAY_VERSION=3.1.5.0 S6_RCD_DIR=/etc/s6-overlay/s6-rc.d S6_LOGGING=1 S6_KEEP_ENV=1
 ARG AMBED_DIR=/ambed AMBED_INST_DIR=/src/xlxd/ambed
 ARG FTDI_INST_DIR=/src/ftdi
 
@@ -40,15 +40,22 @@ RUN mkdir -p \
 ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz /tmp
 RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz
 
-ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-x86_64.tar.xz /tmp
+ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${ARCH}.tar.xz /tmp
 RUN tar -C / -Jxpf /tmp/s6-overlay-x86_64.tar.xz
 
 # Clone xlxd repository
 ADD --keep-git-dir=true https://github.com/LX3JL/xlxd.git#master ${XLXD_INST_DIR}
 
 # Download and extract ftdi driver
-ADD http://www.ftdichip.com/Drivers/D2XX/Linux/libftd2xx-x86_64-1.4.6.tgz /tmp
-RUN tar -C ${FTDI_INST_DIR} -zxvf /tmp/libftd2xx-x86_64-1.4.6.tgz
+# Raspberry Pi (legacy)
+#ADD https://www.ftdichip.com/Drivers/D2XX/Linux/libftd2xx-arm-v7-hf-1.4.27.tgz /tmp
+# Raspberry Pi 4 and up
+#ADD https://www.ftdichip.com/Drivers/D2XX/Linux/libftd2xx-arm-v8-1.4.27.tgz /tmp
+# X64 (working)
+#ADD http://www.ftdichip.com/Drivers/D2XX/Linux/libftd2xx-${ARCH}-1.4.6.tgz /tmp
+# X86 (latest)
+ADD https://ftdichip.com/wp-content/uploads/2022/07/libftd2xx-${ARCH}-1.4.27.tgz /tmp
+RUN tar -C ${FTDI_INST_DIR} -zxvf /tmp/libftd2xx-${ARCH}-*.tgz
 
 # Copy in source code (use local sources if repositories go down)
 #COPY src/ /
@@ -65,8 +72,8 @@ RUN sed -i "s/'X','L','X','\ ','r','e','f','l','e','c','t','o','r','\ '/${REFLEC
 
 # Install FTDI driver
 RUN cp ${FTDI_INST_DIR}/release/build/libftd2xx.* /usr/local/lib && \
-    chmod 0755 /usr/local/lib/libftd2xx.so.1.4.6 && \
-    ln -sf /usr/local/lib/libftd2xx.so.1.4.6 /usr/local/lib/libftd2xx.so
+    chmod 0755 /usr/local/lib/libftd2xx.so.* && \
+    ln -sf /usr/local/lib/libftd2xx.so.* /usr/local/lib/libftd2xx.so
 
 # Compile and install xlxd
 RUN cd ${XLXD_INST_DIR}/src && \
