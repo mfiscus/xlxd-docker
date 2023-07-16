@@ -24,10 +24,10 @@ sed -i "s/\(PageOptions\['ModuleNames'\]\['D'\][[:blank:]]*\=[[:blank:]]*\)'\([[
 sed -i "s/\(PageOptions\['RepeatersPage'\]\['IPModus'\][[:blank:]]*\=[[:blank:]]*\)'\([[:print:]]*\)'/\1\'HideIP\'/g" ${XLXCONFIG} # Hide IP addresses on repeaters page
 sed -i "s/\(PageOptions\['PeerPage'\]\['IPModus'\][[:blank:]]*\=[[:blank:]]*\)'\([[:print:]]*\)'/\1\'HideIP\'/g" ${XLXCONFIG} # Hide IP addresses on peer page
 sed -i "s/\(PageOptions\['CustomTXT'\][[:blank:]]*\=[[:blank:]]*\)'\([[:print:]]*\)'/\1'$(echo ${DESCRIPTION} | awk '{gsub(/ /,"\\ ")}8')'/g" ${XLXCONFIG}
-sed -i "s/d\.m\.Y/m\.d\.Y/g" ${XLXD_WEB_DIR}/pgs/peers.php # convert date format to US
-sed -i "s/d\.m\.Y/m\.d\.Y/g" ${XLXD_WEB_DIR}/pgs/repeaters.php # convert date format to US
-sed -i "s/d\.m\.Y/m\.d\.Y/g" ${XLXD_WEB_DIR}/pgs/traffic.php # convert date format to US
-sed -i "s/d\.m\.Y/m\.d\.Y/g" ${XLXD_WEB_DIR}/pgs/users.php # convert date format to US
+sed -i "s/d\.m\.Y/m\/d\/Y/g" ${XLXD_WEB_DIR}/pgs/peers.php # convert date format to US
+sed -i "s/d\.m\.Y/m\/d\/Y/g" ${XLXD_WEB_DIR}/pgs/repeaters.php # convert date format to US
+sed -i "s/d\.m\.Y/m\/d\/Y/g" ${XLXD_WEB_DIR}/pgs/traffic.php # convert date format to US
+sed -i "s/d\.m\.Y/m\/d\/Y/g" ${XLXD_WEB_DIR}/pgs/users.php # convert date format to US
 
 # generate virtual host
 cat << EOF > /etc/apache2/sites-available/${URL}.conf

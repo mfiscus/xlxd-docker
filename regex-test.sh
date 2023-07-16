@@ -5,7 +5,7 @@
 
 echo
 
-REFLECTOR_NAME="'C','H','R','C','\ ','R','e','f','l','e','c','t','o','r'"
+REFLECTOR_NAME="'x','l','x','d','-','d','o','c','k','e','r','\ ','\ ','\ '"
 
 cat ./src/xlxd/src/cysfprotocol.cpp | \
 grep "uint8 desc" | \
