@@ -12,10 +12,10 @@ networks:
 
 services:
 
-   traefik:
+  traefik:
     image: traefik:latest
     container_name: "traefik"
-    domainname: kk7mnz.com
+    domainname: fisc.us
     hostname: traefik_container
     # Enables the web UI and tells Traefik to listen to docker
     command:
@@ -64,13 +64,12 @@ services:
       - 40000:40000/udp
       - 21110:21110/udp
     networks:
-      proxy:
-        ipv4_address: "10.0.0.3"
+      - proxy
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock:ro
     dns:
-      - "1.1.1.1"
+      - 1.1.1.1
     dns_search: kk7mnz.com
     restart: unless-stopped
 
@@ -148,12 +147,12 @@ services:
       - "traefik.udp.services.xlxd-yaesu-imrs.loadbalancer.server.port=21110"
     environment:
       CALLSIGN: 'KK7MNZ'
-      EMAIL: 'your@email.com'
-      URL: 'your_dashboard.com'
+      EMAIL: 'you@email.com'
+      URL: 'your.dashboard.url'
       PORT: '80'
       XRFNUM: 'XLX000'
       COUNTRY: 'United States'
-      DESCRIPTION: 'your_description'
+      DESCRIPTION: 'Your Reflector Description'
       MODULES: '4'
       MODULEA: 'Main'
       MODULEB: 'TBD'
@@ -164,14 +163,16 @@ services:
       YSF_DEFAULT_NODE_RX_FREQ: '438000000'
       YSF_DEFAULT_NODE_TX_FREQ: '438000000'
     networks:
-      proxy:
-        ipv4_address: "10.0.0.12"
+      - proxy
     volumes:
       - /opt/xlxd:/config
     device_cgroup_rules:
       - 'c 188:* rmw'
+    devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0
+      - /dev/ttyUSB1:/dev/ttyUSB1
     dns:
-      - "1.1.1.1"
+      - 1.1.1.1
     dns_search: kk7mnz.com
     restart: unless-stopped
     
