@@ -3,13 +3,13 @@ FROM amd64/ubuntu:latest AS base
 
 ENTRYPOINT ["/init"]
 
-ENV TERM="xterm" LANG="C.UTF-8" LC_ALL="C.UTF-8" TZ=Universal
-ENV CALLSIGN="KK7MNZ" EMAIL="you@email.com" URL="your.dashboard.com" XRFNUM="XLX000" PORT=80
-ENV CALLHOME=true COUNTRY="United States" DESCRIPTION="xlxd-docker"
-ENV MODULES=4 MODULEA="Main" MODULEB="TBD" MODULEC="TBD" MODULED="TBD"
+ENV TERM="xterm" LANG="C.UTF-8" LC_ALL="C.UTF-8" TZ="America/Phoenix"
+ENV CALLSIGN="KK7MNZ" EMAIL="matt@kk7mnz.com" URL="xlx847.kk7mnz.com" XRFNUM="XLX847" PORT=8470
+ENV CALLHOME=true COUNTRY="United States" DESCRIPTION="Chandler Ham Radio Club"
+ENV MODULES=1 MODULEA="Main" MODULEB="TBD" MODULEC="TBD" MODULED="TBD"
 ENV XLXCONFIG=/var/www/xlxd/pgs/config.inc.php
 ENV YSF_AUTOLINK_ENABLE=1 YSF_AUTOLINK_MODULE="A" YSF_DEFAULT_NODE_RX_FREQ=438000000 YSF_DEFAULT_NODE_TX_FREQ=438000000
-ENV REFLECTOR_NAME="'x','l','x','d','-','d','o','c','k','e','r','\ ','\ ','\ '"
+ENV REFLECTOR_NAME="'C','H','R','C','\ ','R','e','f','l','e','c','t','o','r'"
 ENV XLXD_DIR=/xlxd XLXD_INST_DIR=/src/xlxd XLXD_WEB_DIR=/var/www/xlxd
 ARG ARCH=x86_64 S6_OVERLAY_VERSION=3.1.5.0 S6_RCD_DIR=/etc/s6-overlay/s6-rc.d S6_LOGGING=1 S6_KEEP_ENV=1
 ARG AMBED_DIR=/ambed AMBED_INST_DIR=/src/xlxd/ambed
