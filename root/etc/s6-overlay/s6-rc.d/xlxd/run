@@ -1,4 +1,4 @@
-#!/command/with-contenv bash
+#!/command/with-contenv sh
 
 PIDFILE="/var/log/xlxd.pid"
 XMLFILE="/var/log/xlxd.xml"
@@ -6,6 +6,9 @@ IP=$(hostname -I)
 
 # check for modified config files
 cp -puv /config/*.* ${XLXD_DIR}
+
+# exit if already running
+[ -f ${PIDFILE} ] && echo "xlxd already running. exiting." && exit 0
 
 # restore xml file to preserve historical data and allow dashboard to start immediately
 cp -puv /config/log/xlxd.xml ${XMLFILE}
@@ -20,3 +23,5 @@ curl -L -s -o ${XLXD_DIR}/dmrid.dat http://xlxapi.rlx.lu/api/exportdmr.php
 
 # Create pid file for service uptime dashboard class
 echo `pidof xlxd` > $PIDFILE
+
+echo "started xlxd $(cat ${PIDFILE})."
