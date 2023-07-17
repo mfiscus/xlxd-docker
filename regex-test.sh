@@ -5,6 +5,12 @@
 
 echo
 
+cat ./src/xlxd/src/main.h | \
+grep "RUN_AS_DAEMON" | \
+sed "s/\#define\ RUN_AS_DAEMON/\/\/\#define\ RUN_AS_DAEMON/g"
+
+echo
+
 REFLECTOR_NAME="'x','l','x','d','-','d','o','c','k','e','r','\ ','\ ','\ '"
 
 cat ./src/xlxd/src/cysfprotocol.cpp | \
