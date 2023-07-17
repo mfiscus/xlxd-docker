@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # backup config files
-cp -puv ${XLXD_DIR}*.* /config
+cp -puv ${XLXD_DIR}/*.* /config
 
 # backup connection log file
 cp -pv /var/log/xlxd.xml /config/log/

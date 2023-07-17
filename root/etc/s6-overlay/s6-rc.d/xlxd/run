@@ -2,7 +2,7 @@
 
 PIDFILE="/var/log/xlxd.pid"
 XMLFILE="/var/log/xlxd.xml"
-IP=$(hostname -I)
+IP=$( hostname -I )
 
 # check for modified config files
 cp -puv /config/*.* ${XLXD_DIR}
