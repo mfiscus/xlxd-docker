@@ -1,4 +1,4 @@
-version: '2.4'
+version: '3.8'
 
 networks:
   proxy:
@@ -11,58 +11,83 @@ networks:
           ip_range: "10.0.0.0/24"
 
 services:
-
   traefik:
     image: traefik:latest
     container_name: "traefik"
-    domainname: fisc.us
+    domainname: kk7mnz.com
     hostname: traefik_container
     # Enables the web UI and tells Traefik to listen to docker
     command:
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
       # logging
-      - "--accesslog=true"
-      - "--accesslog.filepath=/var/log/traefik.log"
-      - "--accesslog.bufferingsize=100"
+      - --accesslog=true
+      #- --log.level=DEBUG
+      - --accesslog.filepath=/var/log/traefik.log
+      - --accesslog.bufferingsize=100
       # create entrypoints
-      - "--entrypoints.www.address=:80"
-      - "--entrypoints.traefik.address=:8080"
+      - --entrypoints.traefik.address=:8080/tcp
       # xlxd
-      - "--entrypoints.xlxd-http.address=:8470"
-      - "--entrypoints.xlxd-repnet.address=:8080/udp"
-      - "--entrypoints.xlxd-xlxcore.address=:10001/udp"
-      - "--entrypoints.xlxd-ysf.address=:42000/udp"
-      - "--entrypoints.xlxd-dextra.address=:30001/udp"
-      - "--entrypoints.xlxd-dplus.address=:20001/udp"
-      - "--entrypoints.xlxd-dcs.address=:30051/udp"
-      - "--entrypoints.xlxd-dmr.address=:8880/udp"
-      - "--entrypoints.xlxd-mmdvm.address=:62030/udp"
-      - "--entrypoints.xlxd-icom-terminal-1.address=:12345/udp"
-      - "--entrypoints.xlxd-icom-terminal-2.address=:12346/udp"
-      - "--entrypoints.xlxd-icom-dv.address=:40000/udp"
-      - "--entrypoints.xlxd-yaesu-imrs.address=:21110/udp"
+      - --entrypoints.xlxd-http.address=:8470/tcp
+      - --entrypoints.xlxd-repnet.address=:8080/udp
+      - --entrypoints.xlxd-repnet.udp.timeout=100s
+      - --entryPoints.xlxd-repnet.transport.lifeCycle.graceTimeOut=0
+      - --entrypoints.xlxd-xlxcore.address=:10001/udp
+      - --entrypoints.xlxd-xlxcore.udp.timeout=300s
+      - --entryPoints.xlxd-xlxcore.transport.lifeCycle.graceTimeOut=0
+      - --entrypoints.xlxd-interlink.address=:10002/udp
+      - --entrypoints.xlxd-interlink.udp.timeout=100s
+      - --entryPoints.xlxd-interlink.transport.lifeCycle.graceTimeOut=0
+      - --entrypoints.xlxd-ysf.address=:42000/udp
+      - --entrypoints.xlxd-ysf.udp.timeout=300s
+      - --entryPoints.xlxd-ysf.transport.lifeCycle.graceTimeOut=0
+      - --entrypoints.xlxd-dextra.address=:30001/udp
+      - --entrypoints.xlxd-dextra.udp.timeout=300s
+      - --entryPoints.xlxd-dextra.transport.lifeCycle.graceTimeOut=0
+      - --entrypoints.xlxd-dplus.address=:20001/udp
+      - --entrypoints.xlxd-dplus.udp.timeout=100s
+      - --entryPoints.xlxd-dplus.transport.lifeCycle.graceTimeOut=0
+      - --entrypoints.xlxd-dcs.address=:30051/udp
+      - --entrypoints.xlxd-dcs.udp.timeout=300s
+      - --entryPoints.xlxd-dcs.transport.lifeCycle.graceTimeOut=0
+      - --entrypoints.xlxd-dmr.address=:8880/udp
+      - --entrypoints.xlxd-dmr.udp.timeout=100s
+      - --entryPoints.xlxd-dmr.transport.lifeCycle.graceTimeOut=0
+      - --entrypoints.xlxd-mmdvm.address=:62030/udp
+      - --entrypoints.xlxd-mmdvm.udp.timeout=1000s
+      - --entryPoints.xlxd-mmdvm.transport.lifeCycle.graceTimeOut=0
+      - --entrypoints.xlxd-icom-terminal-1.address=:12345/udp
+      - --entrypoints.xlxd-icom-terminal-1.udp.timeout=3600s
+      - --entryPoints.xlxd-icom-terminal-1.transport.lifeCycle.graceTimeOut=0
+      - --entrypoints.xlxd-icom-terminal-2.address=:12346/udp
+      - --entrypoints.xlxd-icom-terminal-2.udp.timeout=3600s
+      - --entryPoints.xlxd-icom-terminal-2.transport.lifeCycle.graceTimeOut=0
+      - --entrypoints.xlxd-icom-dv.address=:40000/udp
+      - --entrypoints.xlxd-icom-dv.udp.timeout=300s
+      - --entryPoints.xlxd-icom-dv.transport.lifeCycle.graceTimeOut=0
+      - --entrypoints.xlxd-yaesu-imrs.address=:21110/udp
+      - --entrypoints.xlxd-yaesu-imrs.udp.timeout=1500s
+      - --entryPoints.xlxd-yaesu-imrs.transport.lifeCycle.graceTimeOut=0
     ports:
-      # The HTTP port
-      - "0.0.0.0:80:80/tcp"
-      # The Web UI (enabled by --api.insecure=true)
-      - "0.0.0.0:8080:8080/tcp"
+      # traefik ports
+      - 80:80/tcp # The www port
+      - 8080:8080/tcp # The Web UI (enabled by --api.insecure=true)
       # xlxd ports
-      - 8470:8470/tcp
-      - 8080:8080/udp
-      - 10001:10001/udp
-      - 10002:10002/udp
-      - 42000:42000/udp
-      - 30001:30001/udp
-      - 20001:20001/udp
-      - 30051:30051/udp
-      - 8880:8880/udp
-      - 62030:62030/udp
-      - 12345:12345/udp
-      - 12346:12346/udp
-      - 40000:40000/udp
-      - 21110:21110/udp
+      - 8470:8470/tcp # http
+      - 8080:8080/udp # repnet
+      - 10001:10001/udp # xlxcore
+      - 10002:10002/udp # xlx interlink
+      - 42000:42000/udp # ysf
+      - 30001:30001/udp # dextra
+      - 20001:20001/udp # dplus
+      - 30051:30051/udp # dcs
+      - 8880:8880/udp # dmr
+      - 62030:62030/udp # mmdvm
+      - 12345:12345/udp # icom terminal 1
+      - 12346:12346/udp # icom terminal 2
+      - 40000:40000/udp # icom dv
+      - 21110:21110/udp # yaesu imrs
     networks:
       - proxy
     volumes:
@@ -79,18 +104,24 @@ services:
     domainname: kk7mnz.com
     hostname: xlxd_container
     depends_on:
-      - traefik
+      traefik:
+        condition: service_started
+      pihole:
+        condition: service_healthy
+    logging:
+      driver: "syslog"
+      options:
+        syslog-address: "tcp://192.168.1.6:514"
     labels:
       - "traefik.xlxd-http.rule=HostRegexp:xlx847.kk7mnz.com,{catchall:.*}"
       - "traefik.xlxd-http.priority=1"
       - "traefik.xlxd-http=xlxd-xlxd-http"
-      #- "traefik.port=80"
       - "traefik.docker.network=docker_proxy"
       # Explicitly tell Traefik to expose this container
       - "traefik.enable=true"
       # The domain the service will respond to
       - "traefik.http.routers.xlxd-http.rule=Host(`xlx847.kk7mnz.com`)"
-      # Allow request only from the predefined entry point named "www"
+      # Allow request only from the predefined entry point named "xlxd-http"
       - "traefik.http.routers.xlxd-http.entrypoints=xlxd-http"
       # Specify port
       - "traefik.http.services.xlxd-http.loadbalancer.server.port=8470"
@@ -105,6 +136,10 @@ services:
       - "traefik.udp.routers.xlxd-xlxcore.entrypoints=xlxd-xlxcore"
       - "traefik.udp.routers.xlxd-xlxcore.service=xlxd-xlxcore"
       - "traefik.udp.services.xlxd-xlxcore.loadbalancer.server.port=10001"
+      # xlx interlink
+      - "traefik.udp.routers.xlxd-interlink.entrypoints=xlxd-interlink"
+      - "traefik.udp.routers.xlxd-interlink.service=xlxd-interlink"
+      - "traefik.udp.services.xlxd-interlink.loadbalancer.server.port=10002"
       # xlxd-ysf
       - "traefik.udp.routers.xlxd-ysf.entrypoints=xlxd-ysf"
       - "traefik.udp.routers.xlxd-ysf.service=xlxd-ysf"
@@ -147,32 +182,24 @@ services:
       - "traefik.udp.services.xlxd-yaesu-imrs.loadbalancer.server.port=21110"
     environment:
       CALLSIGN: 'KK7MNZ'
-      EMAIL: 'you@email.com'
-      URL: 'your.dashboard.url'
+      EMAIL: 'matt@kk7mnz.com'
+      URL: 'xlx847.kk7mnz.com'
       PORT: '80'
       XRFNUM: 'XLX000'
       COUNTRY: 'United States'
-      DESCRIPTION: 'Your Reflector Description'
-      MODULES: '4'
+      DESCRIPTION: 'My Kick-Ass Reflector'
+      MODULES: '1'
       MODULEA: 'Main'
       MODULEB: 'TBD'
       MODULEC: 'TBD'
       MODULED: 'TBD'
-      YSF_AUTOLINK_ENABLE: '1'
-      YSF_AUTOLINK_MODULE: 'A'
-      YSF_DEFAULT_NODE_RX_FREQ: '438000000'
-      YSF_DEFAULT_NODE_TX_FREQ: '438000000'
+      TZ: 'America/Phoenix'
     networks:
       - proxy
     volumes:
       - /opt/xlxd:/config
-    device_cgroup_rules:
-      - 'c 188:* rmw'
-    devices:
-      - /dev/ttyUSB0:/dev/ttyUSB0
-      - /dev/ttyUSB1:/dev/ttyUSB1
+    privileged: true
     dns:
       - 1.1.1.1
     dns_search: kk7mnz.com
     restart: unless-stopped
-    
