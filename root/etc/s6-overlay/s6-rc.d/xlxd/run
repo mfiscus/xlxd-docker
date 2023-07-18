@@ -20,4 +20,4 @@ curl -L -s -o ${XLXD_DIR}/dmrid.dat http://xlxapi.rlx.lu/api/exportdmr.php
 touch ${PIDFILE}
 
 # start daemon
-exec /xlxd/xlxd ${XRFNUM} ${IP} ${AMBED}
+exec /xlxd/xlxd ${XLXNUM} ${IP} ${AMBED}

@@ -4,17 +4,13 @@ FROM amd64/ubuntu:latest AS base
 ENTRYPOINT ["/init"]
 
 ENV TERM="xterm" LANG="C.UTF-8" LC_ALL="C.UTF-8" TZ="America/Phoenix" UDEV=1
-ENV CALLSIGN="KK7MNZ" EMAIL="matt@kk7mnz.com" URL="xlx847.kk7mnz.com" XRFNUM="XLX847" PORT=8470
-ENV CALLHOME=true COUNTRY="United States" DESCRIPTION="Chandler Ham Radio Club"
+ENV CALLSIGN="KK7MNZ" EMAIL="matt@kk7mnz.com" URL="xlx847.kk7mnz.com" XLXNUM="XLX847" PORT=80
+ENV CALLHOME=false COUNTRY="United States" DESCRIPTION="XLX Reflector"
 ENV MODULES=1 MODULEA="Main" MODULEB="TBD" MODULEC="TBD" MODULED="TBD"
 ENV XLXCONFIG=/var/www/xlxd/pgs/config.inc.php
 ENV XLXD_DIR=/xlxd XLXD_INST_DIR=/src/xlxd XLXD_WEB_DIR=/var/www/xlxd
 ARG YSF_AUTOLINK_ENABLE=1 YSF_AUTOLINK_MODULE="A" YSF_DEFAULT_NODE_RX_FREQ=438000000 YSF_DEFAULT_NODE_TX_FREQ=438000000
-#ARG REFLECTOR_NAME="'C','H','R','C','\ ','R','e','f','l','e','c','t','o','r'"
 ARG ARCH=x86_64 S6_OVERLAY_VERSION=3.1.5.0 S6_RCD_DIR=/etc/s6-overlay/s6-rc.d S6_LOGGING=1 S6_KEEP_ENV=1
-
-# set timezone
-RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime && echo ${TZ} > /etc/timezone
 
 # install dependencies
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections && \
@@ -48,8 +44,11 @@ ADD --keep-git-dir=true https://github.com/LX3JL/xlxd.git#master ${XLXD_INST_DIR
 # Copy in source code (use local sources if repositories go down)
 #COPY src/ /
 
-# Perform pre-compiliation configurations
+# uncomment next 2 lines for chandler tag
+#ARG REFLECTOR_NAME="'C','h','a','n','d','l','e','r','\ ','H','a','m','s','\ '"
 #RUN sed -i "s/'X','L','X','\ ','r','e','f','l','e','c','t','o','r','\ '/${REFLECTOR_NAME}/g" ${XLXD_INST_DIR}/src/cysfprotocol.cpp
+
+# Perform pre-compiliation configurations
 RUN sed -i "s/\#define\ RUN_AS_DAEMON/\/\/\#define\ RUN_AS_DAEMON/g" ${XLXD_INST_DIR}/src/main.h && \
     sed -i "1!b;s/\(NB_OF_MODULES[[:blank:]]*\)[[:digit:]]*/\1${MODULES}/g" ${XLXD_INST_DIR}/src/main.h && \
     sed -i "s/\(YSF_AUTOLINK_ENABLE[[:blank:]]*\)[[:digit:]]/\1${YSF_AUTOLINK_ENABLE}/g" ${XLXD_INST_DIR}/src/main.h && \
