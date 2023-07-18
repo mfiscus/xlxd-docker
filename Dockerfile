@@ -12,8 +12,6 @@ ENV XLXD_DIR=/xlxd XLXD_INST_DIR=/src/xlxd XLXD_WEB_DIR=/var/www/xlxd
 ARG YSF_AUTOLINK_ENABLE=1 YSF_AUTOLINK_MODULE="A" YSF_DEFAULT_NODE_RX_FREQ=438000000 YSF_DEFAULT_NODE_TX_FREQ=438000000
 #ARG REFLECTOR_NAME="'C','H','R','C','\ ','R','e','f','l','e','c','t','o','r'"
 ARG ARCH=x86_64 S6_OVERLAY_VERSION=3.1.5.0 S6_RCD_DIR=/etc/s6-overlay/s6-rc.d S6_LOGGING=1 S6_KEEP_ENV=1
-ARG AMBED_DIR=/ambed AMBED_INST_DIR=/src/xlxd/ambed
-ARG FTDI_INST_DIR=/src/ftdi
 
 # set timezone
 RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime && echo ${TZ} > /etc/timezone
@@ -32,9 +30,6 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
 
 # Setup directories
 RUN mkdir -p \
-    ${AMBED_DIR} \
-    ${AMBED_INST_DIR} \
-    ${FTDI_INST_DIR} \
     ${XLXD_DIR} \
     ${XLXD_INST_DIR} \
     ${XLXD_WEB_DIR} && \
@@ -50,17 +45,6 @@ RUN tar -C / -Jxpf /tmp/s6-overlay-${ARCH}.tar.xz
 # Clone xlxd repository
 ADD --keep-git-dir=true https://github.com/LX3JL/xlxd.git#master ${XLXD_INST_DIR}
 
-# Download and extract ftdi driver
-# Raspberry Pi (legacy)
-#ADD https://www.ftdichip.com/Drivers/D2XX/Linux/libftd2xx-arm-v7-hf-1.4.27.tgz /tmp
-# Raspberry Pi 4 and up
-#ADD https://www.ftdichip.com/Drivers/D2XX/Linux/libftd2xx-arm-v8-1.4.27.tgz /tmp
-# X64 (working)
-#ADD http://www.ftdichip.com/Drivers/D2XX/Linux/libftd2xx-${ARCH}-1.4.6.tgz /tmp
-# X64 (latest)
-ADD https://ftdichip.com/wp-content/uploads/2022/07/libftd2xx-${ARCH}-1.4.27.tgz /tmp
-RUN tar -C ${FTDI_INST_DIR} -zxvf /tmp/libftd2xx-${ARCH}-*.tgz
-
 # Copy in source code (use local sources if repositories go down)
 #COPY src/ /
 
@@ -75,23 +59,11 @@ RUN sed -i "s/\#define\ RUN_AS_DAEMON/\/\/\#define\ RUN_AS_DAEMON/g" ${XLXD_INST
     cp ${XLXD_INST_DIR}/src/main.h ${XLXD_DIR}/main.h.customized && \
     cp ${XLXD_INST_DIR}/src/cysfprotocol.cpp ${XLXD_DIR}/cysfprotocol.cpp.customized
 
-# Install FTDI driver
-RUN cp ${FTDI_INST_DIR}/release/build/libftd2xx.* /usr/local/lib && \
-    chmod 0755 /usr/local/lib/libftd2xx.so.* && \
-    ln -sf /usr/local/lib/libftd2xx.so.* /usr/local/lib/libftd2xx.so
-
 # Compile and install xlxd
 RUN cd ${XLXD_INST_DIR}/src && \
     make clean && \
     make && \
     make install
-
-# Compile and install AMBE server
-RUN cd ${AMBED_INST_DIR} && \
-    make clean && \
-    make && \
-    make install && \
-    cp ${AMBED_INST_DIR}${AMBED_DIR} ${AMBED_DIR}
 
 # Install web dashboard
 RUN cp -ivR ${XLXD_INST_DIR}/dashboard/* ${XLXD_WEB_DIR}/ && \
@@ -136,10 +108,6 @@ EXPOSE 30051/udp
 EXPOSE 8880/udp
 #UDP port 62030 (MMDVM protocol)
 EXPOSE 62030/udp
-#UDP port 10100 (AMBE controller port)
-EXPOSE 10100/udp
-#UDP port 10101 - 10199 (AMBE transcoding port)
-EXPOSE 10101-10199/udp
 #UDP port 12345 - 12346 (Icom Terminal presence and request port)
 EXPOSE 12345-12346/udp
 #UDP port 40000 (Icom Terminal dv port)
