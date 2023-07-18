@@ -3,7 +3,7 @@ FROM amd64/ubuntu:latest AS base
 
 ENTRYPOINT ["/init"]
 
-ENV TERM="xterm" LANG="C.UTF-8" LC_ALL="C.UTF-8" TZ="America/Phoenix"
+ENV TERM="xterm" LANG="C.UTF-8" LC_ALL="C.UTF-8" TZ="America/Phoenix" UDEV=1
 ENV CALLSIGN="KK7MNZ" EMAIL="matt@kk7mnz.com" URL="xlx847.kk7mnz.com" XRFNUM="XLX847" PORT=8470
 ENV CALLHOME=true COUNTRY="United States" DESCRIPTION="Chandler Ham Radio Club"
 ENV MODULES=1 MODULEA="Main" MODULEB="TBD" MODULEC="TBD" MODULED="TBD"

@@ -19,7 +19,7 @@ sed "s/'X','L','X','\ ','r','e','f','l','e','c','t','o','r','\ '/${REFLECTOR_NAM
 
 echo
 
-MODULES=4
+MODULES=1
 cat ./src/xlxd/src/main.h | \
 grep "NB_OF_MODULES" | \
 sed "1!b;s/\(NB_OF_MODULES[[:blank:]]*\)[[:digit:]]*/\1${MODULES}/g"
