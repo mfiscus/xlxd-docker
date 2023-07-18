@@ -48,6 +48,7 @@ a2dissite *default >/dev/null 2>&1
 a2ensite ${URL} >/dev/null 2>&1
 
 # backup config files
+chown -R root:root /config
 cp -puv /xlxd/*.* /config
 
 touch /.firstRunComplete

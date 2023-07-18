@@ -16,7 +16,7 @@ ARG AMBED_DIR=/ambed AMBED_INST_DIR=/src/xlxd/ambed
 ARG FTDI_INST_DIR=/src/ftdi
 
 # set timezone
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime && echo ${TZ} > /etc/timezone
 
 # install dependencies
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections && \
@@ -57,7 +57,7 @@ ADD --keep-git-dir=true https://github.com/LX3JL/xlxd.git#master ${XLXD_INST_DIR
 #ADD https://www.ftdichip.com/Drivers/D2XX/Linux/libftd2xx-arm-v8-1.4.27.tgz /tmp
 # X64 (working)
 #ADD http://www.ftdichip.com/Drivers/D2XX/Linux/libftd2xx-${ARCH}-1.4.6.tgz /tmp
-# X86 (latest)
+# X64 (latest)
 ADD https://ftdichip.com/wp-content/uploads/2022/07/libftd2xx-${ARCH}-1.4.27.tgz /tmp
 RUN tar -C ${FTDI_INST_DIR} -zxvf /tmp/libftd2xx-${ARCH}-*.tgz
 
