@@ -5,6 +5,12 @@ XMLFILE="/var/log/xlxd.xml"
 IP=$( hostname -I )
 AMBED=ambed
 
+if [ -z ${XLXNUM:-} ]; then
+  echo "XLXNUM is not set"
+  exit 1
+
+fi
+
 # check for modified config files
 cp -pv /config/*.* ${XLXD_DIR}
 
