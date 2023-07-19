@@ -1,10 +1,23 @@
 version: '3.8'
 
 services:
+  ambed:
+    image: mfiscus/ambed:latest
+    container_name: ambed
+    hostname: ambed_container
+    networks:
+      - proxy
+    privileged: true
+    restart: unless-stopped
+
   xlxd:
     image: mfiscus/xlxd:latest
     container_name: xlxd
     hostname: xlxd_container
+    depends_on:
+      ambed:
+        condition: service_healthy
+        restart: true
     environment:
       # only set CALLHOME to true once your are certain your configuration is correct
       # make sure you backup your callinghome.php file (which should be located on the docker host in /opt/xlxd/) 
