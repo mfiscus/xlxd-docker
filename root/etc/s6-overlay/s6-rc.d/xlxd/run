@@ -6,10 +6,10 @@ IP=$( hostname -I )
 AMBED=ambed
 
 # check for modified config files
-cp -puv /config/*.* ${XLXD_DIR}
+cp -pv /config/*.* ${XLXD_DIR}
 
 # restore xml file to preserve historical data and allow dashboard to start immediately
-cp -puv /config/log/xlxd.xml ${XMLFILE}
+cp -pv /config/log/xlxd.xml ${XMLFILE}
 
 # download the dmrid.dat from the XLXAPI server to the xlxd folder
 curl -L -s -o ${XLXD_DIR}/dmrid.dat http://xlxapi.rlx.lu/api/exportdmr.php
