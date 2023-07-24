@@ -5,8 +5,6 @@ services:
     image: mfiscus/ambed:latest
     container_name: ambed
     hostname: ambed_container
-    networks:
-      - proxy
     privileged: true
     restart: unless-stopped
 
@@ -37,8 +35,6 @@ services:
       MODULEC: 'DMR'
       MODULED: 'YSF'
       TZ: 'UTC'
-    networks:
-      - proxy
     volumes:
       # local directory where state and config files (including callinghome.php) will be saved
       - /opt/xlxd:/config
