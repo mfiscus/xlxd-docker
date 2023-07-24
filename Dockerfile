@@ -75,6 +75,7 @@ COPY --chown=www-data:www-data custom/ear.png ${XLXD_WEB_DIR}/img/ear.png
 COPY --chown=www-data:www-data custom/header.jpg ${XLXD_WEB_DIR}/img/header.jpg
 COPY --chown=www-data:www-data custom/logo.jpg ${XLXD_WEB_DIR}/img/dvc.jpg
 COPY --chown=www-data:www-data custom/layout.css ${XLXD_WEB_DIR}/css/layout.css
+COPY --chown=www-data:www-data custom/favicon.ico ${XLXD_WEB_DIR}/favicon.ico
 
 # Copy in s6 service definitions and scripts
 COPY root/ /
