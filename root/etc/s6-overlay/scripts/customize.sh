@@ -57,6 +57,12 @@ cat << EOF > /etc/apache2/sites-available/${URL}.conf
 </VirtualHost>
 EOF
 
+# Configure default timezone in php
+if [ ! -z ${TZ:-} ]; then
+  echo "date.timezone = \""${TZ}"\"" >> /etc/php/*/apache2/php.ini
+
+fi
+
 # Configure httpd
 echo "Listen ${PORT}" >/etc/apache2/ports.conf
 echo "ServerName ${URL}" >> /etc/apache2/apache2.conf
