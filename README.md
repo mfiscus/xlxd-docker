@@ -215,14 +215,14 @@ services:
         condition: service_healthy
         restart: true
     labels:
-      - "traefik.xlxd-http.rule=HostRegexp:xlx847.kk7mnz.com,{catchall:.*}"
+      - "traefik.xlxd-http.rule=HostRegexp:your_domain.com,{catchall:.*}"
       - "traefik.xlxd-http.priority=1"
       - "traefik.xlxd-http=xlxd-xlxd-http"
       - "traefik.docker.network=docker_proxy"
       # Explicitly tell Traefik to expose this container
       - "traefik.enable=true"
       # The domain the service will respond to
-      - "traefik.http.routers.xlxd-http.rule=Host(`xlx847.kk7mnz.com`)"
+      - "traefik.http.routers.xlxd-http.rule=Host(`your_domain.com`)"
       # Allow request only from the predefined entry point named "xlxd-http"
       - "traefik.http.routers.xlxd-http.entrypoints=xlxd-http"
       # Specify port xlxd http port
